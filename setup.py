@@ -20,5 +20,5 @@ setup(
     },
     packages=find_packages(),
     license='MIT',
-    install_requires=required,
+    # install_requires=required,
 )

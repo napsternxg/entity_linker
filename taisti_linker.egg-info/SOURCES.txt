@@ -1,0 +1,12 @@
+README.md
+setup.py
+taisti_linker/__init__.py
+taisti_linker/commons.py
+taisti_linker/entity_linker.py
+taisti_linker/ontology_parser.py
+taisti_linker/similarity_calculator.py
+taisti_linker/text_processor.py
+taisti_linker.egg-info/PKG-INFO
+taisti_linker.egg-info/SOURCES.txt
+taisti_linker.egg-info/dependency_links.txt
+taisti_linker.egg-info/top_level.txt

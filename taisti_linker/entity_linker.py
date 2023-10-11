@@ -3,7 +3,7 @@ from taisti_linker.commons import (EntityType, LabelWithIRI, get_entity_type,
                                    read_brat_all_annotation_files,
                                    read_ner_annotation_file,
                                    read_taisti_dataset_csv)
-from taisti_linker.ontology_parser import OntologyParser
+from taisti_linker.ontology_parser import OntologyParser, OntologyParserCSV
 from taisti_linker.similarity_calculator import SimilarityCalculator, SimilarityType
 from taisti_linker.text_processor import TextProcessor
 
@@ -11,7 +11,7 @@ import argparse
 import csv
 import pickle
 import os
-
+from tqdm.auto import tqdm
 
 class EntityLinker:
     def __init__(
@@ -31,7 +31,7 @@ class EntityLinker:
         self.min_acceptable_similarity = min_acceptable_similarity
         self.ignore_not_linkable = ignore_not_linkable
         self.similarity_measure = similarity_measure
-        self.ontology_parser = OntologyParser(ontology_path)
+        self.ontology_parser = OntologyParserCSV(ontology_path)
         self.text_processor = TextProcessor()
         self.similarity_calculator = SimilarityCalculator(
             similarity_measure, self.text_processor.normalize_text)
@@ -61,7 +61,7 @@ class EntityLinker:
         f = open(output_path, "w")
         writer = csv.writer(f)
 
-        for id, doc in enumerate(self.annotated_docs):
+        for id, doc in enumerate(tqdm(self.annotated_docs, desc="Annotated Docs Link All")):
             if id % 500 == 0:
                 print(f"Processing step: {id}")
             for annotation_id, annotation in enumerate(doc.annotations):
@@ -158,6 +158,7 @@ class EntityLinker:
         cache_path = './foodon_cache.pkl'
 
         if os.path.exists(cache_path):
+            print(f"Loading parsed ontology from cache: {cache_path}")
             with open(cache_path, 'rb') as f:
                 return pickle.load(f)
         else:
@@ -169,6 +170,7 @@ class EntityLinker:
             with open(cache_path, 'wb') as f:
                 pickle.dump(normalized_label_mapping, f,
                             protocol=pickle.HIGHEST_PROTOCOL)
+            print(f"Writing parsed ontology to cache: {cache_path}")
             return normalized_label_mapping
 
 

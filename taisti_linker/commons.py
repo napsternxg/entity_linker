@@ -6,6 +6,20 @@ import os
 import pandas as pd
 import re
 
+def pd_dfs(df, parent):
+  visited = set()
+  def dfs(root):
+    df_children = df[df["?parent"] == root]
+    if df_children.shape[0] == 0:
+      return []
+    visited.add(root)
+    yield root
+    children = df_children["?class"].dropna().values
+    for child in children:
+      if child in visited:
+        continue
+      yield from dfs(child)
+  return dfs(parent)
 
 class EntityType(Enum):
     """ Common entity types supported by NER and BRAT annotations """
